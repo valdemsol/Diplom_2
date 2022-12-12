@@ -1,6 +1,7 @@
 package user;
 
 import com.google.gson.JsonObject;
+import io.qameta.allure.Step;
 import utils.RestClient;
 
 import static constants.Constants.USER_REGISTER;
@@ -11,6 +12,7 @@ public class UserClient extends RestClient {
     private final String REGISTRATION_URL = "api/auth/register";
     private final String USER_URL = "api/auth/user";
 
+    @Step("User Authorization")
     public Token login(Credentials creds) {
         var response = reqSpec
                 .body(creds)
@@ -23,6 +25,7 @@ public class UserClient extends RestClient {
         return new Token(response.path("accessToken"), response.path("refreshToken"));
     }
 
+    @Step("Authorization with invalid parameters")
     public String loginWithBadParams(Credentials creds) {
         return reqSpec
                 .body(creds)
@@ -35,6 +38,7 @@ public class UserClient extends RestClient {
                 .path("message");
     }
 
+    @Step("Logout")
     public void logout(Token token) {
         var json = new JsonObject();
         json.addProperty("token", token.getRefreshToken());
@@ -47,6 +51,7 @@ public class UserClient extends RestClient {
                 .statusCode(200);
     }
 
+    @Step("User creation")
     public Token create(User user) {
         var response = reqSpec
                 .body(user)
@@ -59,6 +64,7 @@ public class UserClient extends RestClient {
         return new Token(response.path("accessToken"), response.path("refreshToken"));
     }
 
+    @Step("User Deletion")
     public void delete(Token token) {
         reqSpec
                 .header("authorization", token.getAccessToken())
@@ -69,6 +75,7 @@ public class UserClient extends RestClient {
                 .statusCode(202);
     }
 
+    @Step("Invalid user creation")
     public String createBadUser(User user) {
         return reqSpec
                 .body(user)
@@ -81,6 +88,7 @@ public class UserClient extends RestClient {
                 .path("message");
     }
 
+    @Step("Change user email")
     public String changeUserEmail(Token token, String email) {
         var json = new JsonObject();
         json.addProperty("email", email);
@@ -96,6 +104,7 @@ public class UserClient extends RestClient {
                 .path("user.email");
     }
 
+    @Step("Change user name")
     public String changeUserName(Token token, String name) {
         var json = new JsonObject();
         json.addProperty("name", name);
@@ -111,6 +120,7 @@ public class UserClient extends RestClient {
                 .path("user.name");
     }
 
+    @Step("Change user password")
     public void changeUserPassword(Token token, String password) {
         var json = new JsonObject();
         json.addProperty("password", password);
@@ -124,6 +134,7 @@ public class UserClient extends RestClient {
                 .statusCode(200);
     }
 
+    @Step("Rejection of unauthorized user data change")
     public String changeUserRejection(String json) {
         return reqSpec
                 .body(json)
@@ -136,6 +147,7 @@ public class UserClient extends RestClient {
                 .path("message");
     }
 
+    @Step("Getting user email")
     public String getUserEmail(Token token) {
         return reqSpec
                 .header("authorization", token.getAccessToken())
